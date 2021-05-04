@@ -16,7 +16,7 @@ jobs:
       - persist_to_workspace:
           root: ~/
           paths:
-            - "image.tar"
+            - image.tar
   test:
     docker:
       - image: cimg/base:2021.04
