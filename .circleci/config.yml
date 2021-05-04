@@ -10,19 +10,20 @@ jobs:
       - run:
           name: Build Docker image
           command: |
-            docker build -t virtual-music-system .
-            docker save -o /image.tar virtual-music-system
+            docker pull xiaomi388/virtual-music-system:latest || true
+            docker build --cache-from xiaomi388/virtual-music-system:latest -t virtual-music-system .
+            docker save -o ~/image.tar virtual-music-system
       - persist_to_workspace:
-          root: /
+          root: ~/
           paths:
-            - image.tar
+            - "image.tar"
   test:
     docker:
       - image: cimg/base:2021.04
     steps:
       - setup_remote_docker
       - attach_workspace:
-          at: /
+          at: ~/
       - run:
           name: Run Tests
           command: |
@@ -34,7 +35,7 @@ jobs:
     steps:
       - setup_remote_docker
       - attach_workspace:
-          at: /
+          at: ~/
       - run:
           name: Publish
           command: |
