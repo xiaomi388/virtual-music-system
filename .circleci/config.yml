@@ -11,11 +11,11 @@ jobs:
           name: Build Docker image
           command: |
             docker build -t virtual-music-system .
-            docker save -o image.tar virtual-music-system
+            docker save -o /image.tar virtual-music-system
       - persist_to_workspace:
-          root: / 
+          root: /
           paths:
-            - "image.tar"
+            - image.tar
   test:
     docker:
       - image: cimg/base:2021.04
