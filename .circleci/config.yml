@@ -12,53 +12,22 @@ jobs:
           command: |
             docker pull xiaomi388/virtual-music-system:latest || true
             docker build --cache-from xiaomi388/virtual-music-system:latest -t virtual-music-system .
-            docker save -o ~/image.tar virtual-music-system
-      - persist_to_workspace:
-          root: ~/
-          paths:
-            - image.tar
-  test:
-    docker:
-      - image: cimg/base:2021.04
-    steps:
-      - setup_remote_docker
-      - attach_workspace:
-          at: ~/
       - run:
           name: Run Tests
-          command: |
-            docker load -i image.tar
-            docker run virtual-music-system ./docker_test.sh
-  publish:
-    docker:
-      - image: cimg/base:2021.04
-    steps:
-      - setup_remote_docker
-      - attach_workspace:
-          at: ~/
+          command: docker run virtual-music-system ./docker_test.sh
       - run:
           name: Publish
           command: |
-            docker load -i image.tar
+            VERSION=`git describe --exact-match --tags $(git log -n1 --pretty='%h') 2>/dev/null`
+            [ -z "$VERSION" ] && exit 0
             echo $DOCKER_PWD | docker login -u $DOCKER_LOGIN --password-stdin
-            TARGET=xiaomi388/virtual-music-system:`git describe --tags`
+            TARGET=xiaomi388/virtual-music-system:$VERSION
+            docker tag virtual-music-system $TARGET
+            docker push $TARGET
+            TARGET=xiaomi388/virtual-music-system:latest
             docker tag virtual-music-system $TARGET
             docker push $TARGET
 
-workflows:
-  build-test-deploy:
-    jobs:
-      - build
-      - test:
-          requires: 
-            - build
-      - publish:
-          requires:
-            - test
-          filters:
-            tags: 
-              only:
-                /.*/
 
 
 
