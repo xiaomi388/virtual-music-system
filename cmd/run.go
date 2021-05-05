@@ -44,7 +44,7 @@ to quickly create a Cobra application.`,
 		songHS := songIntf.HTTPService{
 			Service: &song.Service{
 				LocalRepo: &songDriver.FileRepository{
-					RootDir: viper.GetString("song.local-repo.file.rootdir"),
+					RootDir: viper.GetString("song.localrepo.file.rootdir"),
 				},
 				RemoteRepos: []model.RemoteRepository{
 					&songDriver.YoutubeRepository{},

@@ -20,9 +20,10 @@ RUN cd ./virtual-music-system/ && GO111MODULE=on go build
 
 EXPOSE 3001
 
+ENV LANG="C.UTF-8"
 ENV VMS_HTTP_HOSTPORT="0.0.0.0:3001"
 ENV VMS_METADATA_DRIVER_NETEASE_BASEURL="http://localhost:3000"
-ENV VMS_LOCALREPO_FILE_ROOTDIR="/data"
+ENV VMS_SONG_LOCALREPO_FILE_ROOTDIR="/data"
 
 WORKDIR /virtual-music-system/scripts
 
