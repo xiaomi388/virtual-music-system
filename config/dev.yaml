@@ -4,7 +4,7 @@ http:
 metadata:
   driver:
     netease:
-      baseurl: "http://10.0.0.33:49174"
+      baseurl: "http://neapi.n.xiaomi388.com:10444"
 
 song:
   localrepo:
