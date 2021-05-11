@@ -41,6 +41,15 @@ This application is a tool to generate the needed files
 to quickly create a Cobra application.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		ge := gin.Default()
+		songRepo := &netease.SongRepository{
+			BaseURL: viper.GetString("metadata.driver.netease.baseurl"),
+			Client:  http.Client{},
+		}
+		playlistRepo := &netease.PlaylistRepository{
+			BaseURL: viper.GetString("metadata.driver.netease.baseurl"),
+			Client:  http.Client{},
+			Sr:      songRepo,
+		}
 		songHS := songIntf.HTTPService{
 			Service: &song.Service{
 				LocalRepo: &songDriver.FileRepository{
@@ -54,10 +63,8 @@ to quickly create a Cobra application.`,
 		}
 		metaHS := metaIntf.HTTPService{
 			Service: &metadata.Service{
-				SongRepo: &netease.SongRepository{
-					BaseURL: viper.GetString("metadata.driver.netease.baseurl"),
-					Client:  http.Client{},
-				},
+				SongRepo:     songRepo,
+				PlayListRepo: playlistRepo,
 			},
 			GE: ge,
 		}

@@ -24,7 +24,7 @@ func TestSongRepository_GetSongsByQuery(t *testing.T) {
 		BaseURL: "http://127.0.0.1:3000",
 		Client:  http.Client{},
 	}
-	songs, err := r.GetSongsByQuery("海阔天空", 1, 0)
+	songs, _, err := r.GetSongsByQuery("海阔天空", 1, 0)
 	if err != nil {
 		t.Fatalf(err.Error())
 	}
