@@ -3,7 +3,7 @@ package song
 import (
 	"fmt"
 	"github.com/pkg/errors"
-	"github.com/xiaomi388/virtual-music-system/song/model"
+	"github.com/xiaomi388/virtual-music-system/pkg/song/model"
 )
 
 type Service struct {

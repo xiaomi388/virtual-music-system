@@ -2,8 +2,8 @@ package intf
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/xiaomi388/virtual-music-system/metadata"
-	"github.com/xiaomi388/virtual-music-system/metadata/song"
+	"github.com/xiaomi388/virtual-music-system/pkg/metadata"
+	"github.com/xiaomi388/virtual-music-system/pkg/metadata/song"
 	"strconv"
 )
 

@@ -1,6 +1,6 @@
 package artist
 
-import "github.com/xiaomi388/virtual-music-system/metadata/song"
+import "github.com/xiaomi388/virtual-music-system/pkg/metadata/song"
 
 type ID string
 

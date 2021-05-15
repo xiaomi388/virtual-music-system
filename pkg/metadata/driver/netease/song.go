@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/pkg/errors"
-	"github.com/xiaomi388/virtual-music-system/metadata/song"
+	"github.com/xiaomi388/virtual-music-system/pkg/metadata/song"
 	"io/ioutil"
 	"net/http"
 	"strconv"

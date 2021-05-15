@@ -1,6 +1,6 @@
 package playlist
 
-import "github.com/xiaomi388/virtual-music-system/metadata/song"
+import "github.com/xiaomi388/virtual-music-system/pkg/metadata/song"
 
 type PlayList struct {
 	ID            song.ID     `json:"id"`

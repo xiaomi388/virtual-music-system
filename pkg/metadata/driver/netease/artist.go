@@ -1,8 +1,8 @@
 package netease
 
 import (
-	"github.com/xiaomi388/virtual-music-system/metadata/artist"
-	"github.com/xiaomi388/virtual-music-system/metadata/exception"
+	"github.com/xiaomi388/virtual-music-system/pkg/metadata/artist"
+	"github.com/xiaomi388/virtual-music-system/pkg/metadata/exception"
 )
 
 type ArtistRepository struct {

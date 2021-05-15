@@ -1,8 +1,8 @@
 package song
 
 import (
-	"github.com/xiaomi388/virtual-music-system/song/driver"
-	"github.com/xiaomi388/virtual-music-system/song/model"
+	"github.com/xiaomi388/virtual-music-system/pkg/song/driver"
+	"github.com/xiaomi388/virtual-music-system/pkg/song/model"
 	"testing"
 )
 

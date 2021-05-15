@@ -1,6 +1,6 @@
 package intf
 
-import "github.com/xiaomi388/virtual-music-system/song"
+import "github.com/xiaomi388/virtual-music-system/pkg/song"
 import "github.com/gin-gonic/gin"
 
 type HTTPService struct {
