@@ -2,8 +2,8 @@
 package metadata
 
 import (
-	"github.com/xiaomi388/virtual-music-system/metadata/playlist"
-	"github.com/xiaomi388/virtual-music-system/metadata/song"
+	"github.com/xiaomi388/virtual-music-system/pkg/metadata/playlist"
+	"github.com/xiaomi388/virtual-music-system/pkg/metadata/song"
 )
 
 type Service struct {

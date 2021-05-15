@@ -1,7 +1,7 @@
 package driver
 
 import (
-	"github.com/xiaomi388/virtual-music-system/song/model"
+	"github.com/xiaomi388/virtual-music-system/pkg/song/model"
 	"os"
 	"path/filepath"
 )
