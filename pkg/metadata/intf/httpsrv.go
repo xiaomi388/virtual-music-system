@@ -7,17 +7,20 @@ import (
 	"strconv"
 )
 
+// HTTPService ports the metadata.Service by HTTP
 type HTTPService struct {
 	Service *metadata.Service
 	GE      *gin.Engine
 }
 
+// Pager represents the range of resources
 type Pager struct {
 	Limit  int `json:"limit"`
 	Offset int `json:"offset"`
 	Total  int `json:"total"`
 }
 
+// GetSongsByQuery calls Service.GetSongsByQuery
 func (s *HTTPService) GetSongsByQuery(c *gin.Context) {
 	q := c.Query("q")
 	pid := c.Query("pid")
@@ -53,17 +56,18 @@ func (s *HTTPService) GetSongsByQuery(c *gin.Context) {
 	if pid == "" {
 		songs, total, err = s.Service.GetSongsByQuery(q, limit, offset)
 	} else {
-		songs, total, err = s.Service.GetSongsByPlaylistId(pid, limit, offset)
+		songs, total, err = s.Service.GetSongsByPlaylistID(pid, limit, offset)
 	}
 	if err != nil {
 		_ = c.AbortWithError(500, err)
 		return
 	}
-	s.SendSuccessWithPager(c, songs, &Pager{Limit: limit, Offset: offset, Total: total})
+	s.sendSuccessWithPager(c, songs, &Pager{Limit: limit, Offset: offset, Total: total})
 	return
 }
 
-func (s *HTTPService) GetPlayListsByQuery(c *gin.Context) {
+// GetPlaylistsByQuery calls Service.GetPlaylistsByQuery
+func (s *HTTPService) GetPlaylistsByQuery(c *gin.Context) {
 	q := c.Query("q")
 	limitStr := c.DefaultQuery("limit", "20")
 	offsetStr := c.DefaultQuery("offset", "0")
@@ -91,11 +95,12 @@ func (s *HTTPService) GetPlayListsByQuery(c *gin.Context) {
 		_ = c.AbortWithError(400, err)
 		return
 	}
-	s.SendSuccessWithPager(c, playlists, &Pager{Limit: limit, Offset: offset, Total: total})
+	s.sendSuccessWithPager(c, playlists, &Pager{Limit: limit, Offset: offset, Total: total})
 	return
 }
 
-func (s *HTTPService) GetPlayListByID(c *gin.Context) {
+// GetPlaylistByID calls Service.GetPlaylistByID
+func (s *HTTPService) GetPlaylistByID(c *gin.Context) {
 	pid := c.Query("id")
 
 	if pid == "" {
@@ -104,16 +109,17 @@ func (s *HTTPService) GetPlayListByID(c *gin.Context) {
 			"message": "pid is a must parameter",
 		})
 	}
-	playList, err := s.Service.GetPlayListById(pid)
+	playList, err := s.Service.GetPlaylistByID(pid)
 	if err != nil {
 		_ = c.AbortWithError(400, err)
 		return
 	}
-	s.SendSuccessWithPager(c, playList, nil)
+	s.sendSuccessWithPager(c, playList, nil)
 	return
 }
 
-func (s *HTTPService) GetSongsByPlayListId(c *gin.Context) {
+//GetSongsByPlaylistID calls Service.GetSongsByPlaylistsID
+func (s *HTTPService) GetSongsByPlaylistID(c *gin.Context) {
 	pid := c.Query("pid")
 	limitStr := c.DefaultQuery("limit", "20")
 	offsetStr := c.DefaultQuery("offset", "0")
@@ -136,16 +142,16 @@ func (s *HTTPService) GetSongsByPlayListId(c *gin.Context) {
 		return
 	}
 
-	songs, total, err := s.Service.GetSongsByPlaylistId(pid, limit, offset)
+	songs, total, err := s.Service.GetSongsByPlaylistID(pid, limit, offset)
 	if err != nil {
 		_ = c.AbortWithError(400, err)
 		return
 	}
-	s.SendSuccessWithPager(c, songs, &Pager{Limit: limit, Offset: offset, Total: total})
+	s.sendSuccessWithPager(c, songs, &Pager{Limit: limit, Offset: offset, Total: total})
 	return
 }
 
-func (s *HTTPService) SendSuccessWithPager(ctx *gin.Context, resp interface{}, pager *Pager) {
+func (s *HTTPService) sendSuccessWithPager(ctx *gin.Context, resp interface{}, pager *Pager) {
 	type Result struct {
 		Result interface{} `json:"result"`
 		Pager  *Pager      `json:"pager,omitempty"`
@@ -153,10 +159,10 @@ func (s *HTTPService) SendSuccessWithPager(ctx *gin.Context, resp interface{}, p
 	ctx.JSON(200, Result{resp, pager})
 }
 
-// not threading safe
+// Register binds url paths to corresponding handlers
 func (s *HTTPService) Register() {
 	s.GE.GET("/v1/metadata/songs", s.GetSongsByQuery)
-	s.GE.GET("/v1/metadata/playlists", s.GetPlayListsByQuery)
-	s.GE.GET("/v1/metadata/playlist", s.GetPlayListByID)
-	s.GE.GET("/v1/metadata/playlist/songs", s.GetSongsByPlayListId)
+	s.GE.GET("/v1/metadata/playlists", s.GetPlaylistsByQuery)
+	s.GE.GET("/v1/metadata/playlist", s.GetPlaylistByID)
+	s.GE.GET("/v1/metadata/playlist/songs", s.GetSongsByPlaylistID)
 }

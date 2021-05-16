@@ -1,4 +1,3 @@
-// metadata contains songs metadata including albums, artists, ...
 package metadata
 
 import (
@@ -6,6 +5,7 @@ import (
 	"github.com/xiaomi388/virtual-music-system/pkg/metadata/song"
 )
 
+// Service is an application service for CRUD of song-related metadata
 type Service struct {
 	SongRepo     song.Repository
 	PlayListRepo playlist.Repository
@@ -19,20 +19,22 @@ func (s *Service) GetArtistsByQuery() {
 
 }
 
-func (s *Service) GetPlaylistsByQuery(q string, limit int, offset int) ([]playlist.PlayList, int, error) {
+// GetPlaylistsByQuery returns playlist.Playlist entities to user.
+func (s *Service) GetPlaylistsByQuery(q string, limit int, offset int) ([]playlist.Playlist, int, error) {
 	playlistsMap, total, err := s.PlayListRepo.GetPlaylistsByQuery(q, limit, offset)
 	if err != nil {
 		return nil, 0, err
 	}
-	playLists := make([]playlist.PlayList, 0, len(playlistsMap))
+	playLists := make([]playlist.Playlist, 0, len(playlistsMap))
 	for _, p := range playlistsMap {
 		playLists = append(playLists, p)
 	}
 	return playLists, total, nil
 }
 
-func (s *Service) GetSongsByPlaylistId(q string, limit int, offset int) ([]song.Song, int, error) {
-	songMap, total, err := s.SongRepo.GetSongsByPlayListId(q, limit, offset)
+// GetSongsByPlaylistID returns a playlist.Playlist entity of a specific id.
+func (s *Service) GetSongsByPlaylistID(q string, limit int, offset int) ([]song.Song, int, error) {
+	songMap, total, err := s.SongRepo.GetSongsByPlaylistID(q, limit, offset)
 	if err != nil {
 		return nil, 0, err
 	}
@@ -43,6 +45,7 @@ func (s *Service) GetSongsByPlaylistId(q string, limit int, offset int) ([]song.
 	return songs, total, nil
 }
 
+// GetSongsByQuery returns song.Song entities by searching a song keyword.
 func (s *Service) GetSongsByQuery(q string, limit int, offset int) ([]song.Song, int, error) {
 	songMap, total, err := s.SongRepo.GetSongsByQuery(q, limit, offset)
 	if err != nil {
@@ -55,11 +58,12 @@ func (s *Service) GetSongsByQuery(q string, limit int, offset int) ([]song.Song,
 	return songs, total, nil
 }
 
-func (s *Service) GetPlayListById(pid string) (playlist.PlayList, error) {
-	playList, err := s.PlayListRepo.GetPlaylist(song.ID(pid))
+// GetPlaylistByID returns a playlist.Playlist entity of a specific id.
+func (s *Service) GetPlaylistByID(pid string) (playlist.Playlist, error) {
+	pl, err := s.PlayListRepo.GetPlaylist(song.ID(pid))
 	if err != nil {
-		return playList, err
+		return pl, err
 	}
 
-	return playList, nil
+	return pl, nil
 }
