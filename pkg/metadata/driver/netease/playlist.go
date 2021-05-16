@@ -11,25 +11,27 @@ import (
 	"strconv"
 )
 
+// PlaylistRepository retrieves playlist metadata from netease API.
 type PlaylistRepository struct {
 	Sr      song.Repository
 	BaseURL string
 	Client  http.Client
 }
 
-func (r *PlaylistRepository) GetPlaylist(pid song.ID) (playlist.PlayList, error) {
+// GetPlaylist retrieves playlist metadata by a song's id from netease API.
+func (r *PlaylistRepository) GetPlaylist(pid song.ID) (playlist.Playlist, error) {
 	req, err := http.NewRequest("GET",
 		fmt.Sprintf("%s/playlist/detail?id=%s", r.BaseURL, pid), nil)
 	if err != nil {
-		return playlist.PlayList{}, errors.Wrap(err, "http.NewRequest")
+		return playlist.Playlist{}, errors.Wrap(err, "http.NewRequest")
 	}
 	resp, err := r.Client.Do(req)
 	if err != nil || resp == nil {
-		return playlist.PlayList{}, errors.Wrap(err, "r.Client.Do")
+		return playlist.Playlist{}, errors.Wrap(err, "r.Client.Do")
 	}
 	defer resp.Body.Close()
 	if resp.StatusCode != http.StatusOK {
-		return playlist.PlayList{}, fmt.Errorf("resp returns %s", resp.Status)
+		return playlist.Playlist{}, fmt.Errorf("resp returns %s", resp.Status)
 	}
 	respStr, err := ioutil.ReadAll(resp.Body)
 
@@ -61,7 +63,7 @@ func (r *PlaylistRepository) GetPlaylist(pid song.ID) (playlist.PlayList, error)
 
 	err = json.Unmarshal(respStr, &respObj)
 	if err != nil {
-		return playlist.PlayList{}, errors.Wrap(err, "json.Unmarshal")
+		return playlist.Playlist{}, errors.Wrap(err, "json.Unmarshal")
 	}
 	var songs []song.Song
 	for _, track := range respObj.Playlist.Tracks {
@@ -75,7 +77,7 @@ func (r *PlaylistRepository) GetPlaylist(pid song.ID) (playlist.PlayList, error)
 			ArtistName: artistName,
 		})
 	}
-	playList := playlist.PlayList{
+	playList := playlist.Playlist{
 		ID:            song.ID(strconv.Itoa(respObj.Playlist.ID)),
 		Name:          respObj.Playlist.Name,
 		CoverImageUrl: respObj.Playlist.CoverImgURL,
@@ -87,8 +89,9 @@ func (r *PlaylistRepository) GetPlaylist(pid song.ID) (playlist.PlayList, error)
 	return playList, nil
 }
 
+// GetPlaylistsByQuery retrieves playlists metadata from netease by searching a keyword.
 func (r *PlaylistRepository) GetPlaylistsByQuery(q string,
-	limit int, offset int) (map[song.ID]playlist.PlayList, int, error) {
+	limit int, offset int) (map[song.ID]playlist.Playlist, int, error) {
 
 	respStr, err := r.Sr.SearchByType(song.SearchTypePlaylist, q, limit, offset)
 	if err != nil {
@@ -122,9 +125,9 @@ func (r *PlaylistRepository) GetPlaylistsByQuery(q string,
 		return nil, 0, errors.Wrap(err, "json.Unmarshal")
 	}
 
-	playlists := map[song.ID]playlist.PlayList{}
+	playlists := map[song.ID]playlist.Playlist{}
 	for _, p := range respObj.Result.Playlists {
-		playlists[song.ID(strconv.Itoa(p.ID))] = playlist.PlayList{
+		playlists[song.ID(strconv.Itoa(p.ID))] = playlist.Playlist{
 			ID:            song.ID(strconv.Itoa(p.ID)),
 			Name:          p.Name,
 			CoverImageUrl: p.CoverImgURL,

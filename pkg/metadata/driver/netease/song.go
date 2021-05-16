@@ -11,12 +11,14 @@ import (
 	"strings"
 )
 
+// SongRepository retrieves songs metadata from netease.
 type SongRepository struct {
 	pr      PlaylistRepository
 	BaseURL string
 	Client  http.Client
 }
 
+// GetSong retrieves the metadata of a song of a specific id from netease.
 func (r *SongRepository) GetSong(id song.ID) (song.Song, error) {
 	songs, err := r.GetSongs([]song.ID{id})
 	if err == nil && len(songs) != 0 {
@@ -25,6 +27,7 @@ func (r *SongRepository) GetSong(id song.ID) (song.Song, error) {
 	return song.Song{}, err
 }
 
+// GetSongs retrieves a bunch of songs metadata from netease.
 func (r *SongRepository) GetSongs(ids []song.ID) ([]song.Song, error) {
 	if len(ids) == 0 {
 		return nil, nil
@@ -92,6 +95,7 @@ func (r *SongRepository) GetSongs(ids []song.ID) ([]song.Song, error) {
 	return ss, nil
 }
 
+// GetSongsByQuery retrieves songs metadata by providing a keyword to netease.
 func (r *SongRepository) GetSongsByQuery(q string,
 	limit int, offset int) (map[song.ID]song.Song, int, error) {
 
@@ -133,7 +137,8 @@ func (r *SongRepository) GetSongsByQuery(q string,
 	return songs, respObj.Result.SongCount, nil
 }
 
-func (r *SongRepository) GetSongsByPlayListId(pid string,
+// GetSongsByPlaylistID retrieves songs metadata in a specific playlist.
+func (r *SongRepository) GetSongsByPlaylistID(pid string,
 	limit int, offset int) (map[song.ID]song.Song, int, error) {
 	req, err := http.NewRequest("GET",
 		fmt.Sprintf("%s/playlist/detail?id=%s", r.BaseURL, pid), nil)
@@ -184,6 +189,7 @@ func (r *SongRepository) GetSongsByPlayListId(pid string,
 	return songsMap, len(songIds), nil
 }
 
+// SearchByType shouldn't be a method of SongRepository, will fix soon.
 func (r *SongRepository) SearchByType(t song.SearchType, q string,
 	limit, offset int) ([]byte, error) {
 	req, err := http.NewRequest("GET",
