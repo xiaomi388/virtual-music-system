@@ -3,23 +3,19 @@ version: 2.1
 jobs:
   execute:
     docker:
-      - image: cimg/base:2021.04
+      - image: xiaomi388/virtual-music-system-base:latest
     steps:
       - checkout
       - setup_remote_docker
       - run:
-          name: Build Docker image
-          command: |
-            docker pull xiaomi388/virtual-music-system:latest || true
-            docker build --cache-from xiaomi388/virtual-music-system:latest -t virtual-music-system .
-      - run:
           name: Run Tests
-          command: docker run virtual-music-system ./docker_test.sh
+          command: ./scripts/docker_test.sh
       - run:
           name: Publish
           command: |
             VERSION=`git describe --exact-match --tags $(git log -n1 --pretty='%h') 2>/dev/null` || true
             [ -z "$VERSION" ] && exit 0
+            docker build xiaomi388/virtual-music-system:latest -t virtual-music-system .
             echo $DOCKER_PWD | docker login -u $DOCKER_LOGIN --password-stdin
             TARGET=xiaomi388/virtual-music-system:$VERSION
             docker tag virtual-music-system $TARGET

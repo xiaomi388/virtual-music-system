@@ -1,5 +1,7 @@
 #!/bin/bash
 
+SCRIPT_DIR=$(dirname "$0")
+
 cd /NeteaseCloudMusicApi/ && node app.js &
 status=$?
 if [ $status -ne 0 ]; then
@@ -7,7 +9,7 @@ if [ $status -ne 0 ]; then
   exit $status
 fi
 
-cd /virtual-music-system/ && go test ./...
+cd "$SCRIPT_DIR"/.. && go test ./...
 status=$?
 if [ $status -ne 0 ]; then
   echo "Test Failed: $status"
