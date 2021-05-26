@@ -3,7 +3,7 @@ version: 2.1
 jobs:
   execute:
     docker:
-      - image: docker.io/xiaomi388/virtual-music-system-base:base
+      - image: xiaomi388/virtual-music-system-base:latest
     steps:
       - checkout
       - setup_remote_docker
