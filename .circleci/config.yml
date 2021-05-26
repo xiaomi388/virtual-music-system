@@ -12,7 +12,7 @@ jobs:
           command: ./scripts/docker_test.sh
   publish:
     docker:
-      - image: circli-ci
+      - image: cimg/base:2021.04
     steps:
       - checkout
       - setup_remote_docker
@@ -40,6 +40,9 @@ workflows:
               ignore: /.*/
       - publish:
           filters:
+            branches:
+              only: 
+                - master
             tags:
               only: /.*/
           
