@@ -1,7 +1,7 @@
 # Use the latest 2.1 version of CircleCI pipeline process engine. See: https://circleci.com/docs/2.0/configuration-reference
 version: 2.1
 jobs:
-  execute:
+  test:
     docker:
       - image: xiaomi388/virtual-music-system-base:latest
     steps:
@@ -10,16 +10,17 @@ jobs:
       - run:
           name: Run Tests
           command: ./scripts/docker_test.sh
+  publish:
+    docker:
+      - image: circli-ci
+    steps:
+      - checkout
+      - setup_remote_docker
       - run:
           name: Publish
           command: |
             VERSION=`git describe --exact-match --tags $(git log -n1 --pretty='%h') 2>/dev/null` || true
             [ -z "$VERSION" ] && exit 0
-            apt-get install apt-transport-https ca-certificates curl gnupg lsb-release
-            curl -fsSL https://download.docker.com/linux/debian/gpg | gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
-            echo "deb [arch=amd64 signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/debian $(lsb_release -cs) stable" | tee /etc/apt/sources.list.d/docker.list > /dev/null
-            apt-get update
-            apt-get install docker-ce-cli
             docker build -t xiaomi388/virtual-music-system .
             echo $DOCKER_PWD | docker login -u $DOCKER_LOGIN --password-stdin
             TARGET=xiaomi388/virtual-music-system:$VERSION
@@ -29,11 +30,16 @@ jobs:
             docker tag virtual-music-system $TARGET
             docker push $TARGET
 workflows:
-  build-test-deploy:
+  main:
     jobs:
-      - execute:
+      - test:
           filters:
             branches:
               only: /.*/
             tags:
+              ignore: /.*/
+      - publish:
+          filters:
+            tags:
               only: /.*/
+          
